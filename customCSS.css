@@ -1,0 +1,33 @@
+body {
+  margin: 0 auto;
+}
+
+#buttonGroup {
+  margin: 0 auto;
+  padding: 20px;
+}
+
+#dropdowns {
+  font-size: 20px;
+}
+
+#openings {
+  font-size: 20px;
+}
+
+#variations {
+  font-size: 20px;
+}
+
+
+
+button {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 10px 25px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 20px;
+}

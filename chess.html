@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Chess Board</title>
+    <link rel="stylesheet" href="css/chessboard-1.0.0.min.css">
+    <link rel="stylesheet" href="customCSS.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="js/chessboard-1.0.0.min.js"></script>
+  </head>
+  <body style="width: 1000px">
+    <div id="myBoard" style="width: 600px">
+    </div>
+    <div id="dropdowns" style=width: 600px>
+      <label for="openings">Select an opening:</label>
+      <select name="openings" id="openings"></select>
+      <label for="variations">Select a variation:</label>
+      <select name="variations" id="variations">
+        <option value="none">None</option>
+      </select>
+    </div>
+    <div id="buttonGroup" style="width: 600px">
+      <button id="moveBtn">Move</button>
+      <button id="restartBtn">Restart</button>
+    </div>
+    <div>
+      <p id="message"></p>
+    </div>
+
+    <script>
+
+    var data = [
+      {
+        'name': 'nimzo',
+        'base': ['d2-d4', 'g8-f6', 'c2-c4', 'e7-e6', 'b1-c3', 'f8-b4'],
+        'variations': [
+          {
+            'name':'classical',
+            'line':['d1-c2'],
+          },
+          {
+            'name':'rubinstein',
+            'line':['e2-e3'],
+          },
+          {
+            'name':'kasparov',
+            'line':['g1-f3'],
+          },
+        ]
+      },
+      {
+        'name': 'sicilian',
+        'base': ['e2-e4', 'c7-c5', 'g1-f3','d7-d6', 'd2-d4', 'c5-d4','f3-d4', 'g8-f6', 'b1-c3'],
+        'variations': [
+          {
+            'name':'classical',
+            'line':['b8-c6'],
+          },
+          {
+            'name':'najdorf',
+            'line':['a7-a6'],
+          },
+          {
+            'name':'dragon',
+            'line':['g7-g6'],
+          },
+          {
+            'name':'schevenigan',
+            'line':['e7-e6'],
+          },
+          {
+            'name':'krupelchik',
+            'line':['c8-d7'],
+          },
+        ]
+      },
+    ]
+
+    var populateOpeningDropdown = function(){
+      $('#openings').empty();
+      for (const d of data) {
+        $('#openings').append($(document.createElement('option')).prop({
+          value: d['name'],
+          text: d['name'].charAt(0).toUpperCase() + d['name'].slice(1)
+        }))
+      }
+    }
+
+    var populateVariationsDropdown = function() {
+      $('#variations').empty();
+      for (const d of data) {
+        if (d['name'] == opening) {
+          for (const v of d['variations']) {
+            $('#variations').append($(document.createElement('option')).prop({
+              value: v['name'],
+              text: v['name'].charAt(0).toUpperCase() + v['name'].slice(1)
+            }))
+          }
+        }
+      }
+    }
+
+    var createSequenceOfMoves = function(opening, variation) {
+      for (d in data) {
+        if (opening == data[d]['name']) {
+          sequence = data[d]['base'];
+          for (v in data[d]['variations']) {
+            if (variation == data[d]['variations'][v]['name']) {
+              sequence = sequence.concat(data[d]['variations'][v]['line']);
+            }
+          }
+        }
+      }
+      return sequence;
+    }
+    // This a a build in chessboard.js function.
+    var board = Chessboard('myBoard', "start");
+    var count = 0;
+    var sequence = [];
+    populateOpeningDropdown();
+    var opening = $('#openings').val();
+    populateVariationsDropdown()
+    var variation = $('#variations').val();
+    sequence = createSequenceOfMoves(opening, variation);
+
+    $('#moveBtn').on('click', function () {
+      $('#message').text('');
+      if (count+1>sequence.length) {
+        $('#message').text("That is the end of the opening!");
+      } else {
+      board.move(sequence[count])
+      count = count+1;
+      }
+    })
+
+    $('#restartBtn').on('click', function () {
+      $('#message').text('');
+      sequence = createSequenceOfMoves(opening, variation);
+      count = 0;
+      board.start('true');
+    })
+    
+    $('#openings').change(function(){
+      opening = $('#openings').val();
+      populateVariationsDropdown();
+      variation = $('#variations').val();
+      sequence = createSequenceOfMoves(opening, variation);
+      count = 0;
+      board.start('true');
+
+    });
+    $('#variations').change(function(){
+      variation = $('#variations').val();
+      sequence = createSequenceOfMoves(opening, variation);
+      count = 0;
+      board.start('true');
+    })
+    </script>
+  </body>
+</html>
